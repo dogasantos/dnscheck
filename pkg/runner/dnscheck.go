@@ -12,7 +12,8 @@ func DoResolve(target string, saferecord string) string {
 	var resolvers []string
 	resolvers = append(resolvers,target+":53")
 
-	dnsClient := retryabledns.New(resolvers, 2)
+	dnsClient ,_:= retryabledns.New(resolvers, 2)
+
 	dnsResponses, _ := dnsClient.Query(saferecord, dns.TypeA)
 	if len(dnsResponses.A) > 0 {
 		return dnsResponses.A[0]
