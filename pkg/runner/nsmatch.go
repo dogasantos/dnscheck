@@ -8,27 +8,42 @@ import (
 	"github.com/projectdiscovery/retryabledns"
 )
 
-// This is a nice comment to make lint happy. hello lint, i'm here!
-func DoResolve(target string) string {
+
+
+func DoResolve(target string, saferecord string) string {
 	var resolvers []string
-	
 	resolvers = append(resolvers,target+":53")
 
 	dnsClient := retryabledns.New(resolvers, 2)
-	dnsResponses, _ := dnsClient.Query(target, dns.TypeA)
-	return dnsResponses.A
+	dnsResponses, _ := dnsClient.Query(saferecord, dns.TypeA)
+	if len(dnsResponses.A) > 0 {
+		return dnsResponses.A[0]
+	} else {
+		return "fail"
+	}
 }
 
 func Start(target string, verbose bool, wg *sync.WaitGroup) {
-	var resolver string
+	var a_record string
+	var poisoned = false
 
 	defer wg.Done()
-	a_record := DoResolve("a.localho.st") // a.localtest.me also works
+	a_record = DoResolve("8.8.8.8" ,"a.localho.st") // a.localtest.me also works
 	
 	if verbose {
 		fmt.Printf("  + Baseline: a.localho.st host has ip address %s\n", a_record)
 	}
-	
-	
+	a_record = "" 
+
+	for i:=0; i < 5; i++ { 
+		a_record = DoResolve(target, "a.localho.st") 
+		if a_record != "127.0.0.1" {
+			poisoned = true
+		}
+	}
+
+	if poisoned == false {
+		fmt.Printf("%s\n",target)
+	}
 }
 	
