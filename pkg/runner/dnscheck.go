@@ -1,4 +1,4 @@
-package nsmatch
+package dnscheck
 
 import (
 	"fmt"
@@ -7,8 +7,6 @@ import (
 	"github.com/miekg/dns"
 	"github.com/projectdiscovery/retryabledns"
 )
-
-
 
 func DoResolve(target string, saferecord string) string {
 	var resolvers []string
