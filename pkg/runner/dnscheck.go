@@ -11,7 +11,6 @@ import (
 func DoResolve(target string, saferecord string) string {
 	var resolvers []string
 	resolvers = append(resolvers,target+":53")
-
 	dnsClient ,_:= retryabledns.New(resolvers, 2)
 
 	dnsResponses, _ := dnsClient.Query(saferecord, dns.TypeA)
@@ -38,6 +37,7 @@ func Start(target string, verbose bool, wg *sync.WaitGroup) {
 		a_record = DoResolve(target, "a.localho.st") 
 		if a_record != "127.0.0.1" {
 			poisoned = true
+			break
 		}
 	}
 
