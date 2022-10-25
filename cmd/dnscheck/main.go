@@ -59,8 +59,8 @@ func main() {
 			if len(target) > 1 {
 				wg.Add(1)
 				go dnscheck.Start(target, options.Verbose, wg)
-				if routinescounter == math.Round(float64(targets) / 10)  {
-					time.Sleep(3 * time.Second)
+				if routinescounter == math.Round(float64(len(targets)) / 10)  {
+					time.Sleep(5 * time.Second)
 					routinescounter = 0
 				} else {
 					routinescounter = routinescounter+1
