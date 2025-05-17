@@ -21,7 +21,7 @@ type Options struct {
 	Verbose				bool
 }
 
-var version = "0.1"
+var version = "0.2"
 
 func parseOptions() *Options {
 	options := &Options{}
