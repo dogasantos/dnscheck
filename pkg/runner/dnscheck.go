@@ -33,7 +33,7 @@ func Start(target string, verbose bool, wg *sync.WaitGroup) {
 	}
 	a_record = "" 
 
-	for i:=0; i < 5; i++ { 
+	for i:=0; i < 9; i++ { 
 		a_record = DoResolve(target, "a.localho.st") 
 		if a_record != "127.0.0.1" {
 			poisoned = true
