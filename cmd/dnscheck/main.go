@@ -12,21 +12,18 @@ import (
 	dnscheck "github.com/dogasantos/dnscheck/pkg/runner"
 )
 
-// This is a nice comment to make lint happy. hello lint, i'm here!
 type Options struct {
 	TargetListFile		string
 	SaneListFile		string
 	TrustedRecord		string
-	Version				bool
+	Iterations			int
 	Verbose				bool
 }
-
-var version = "0.2"
 
 func parseOptions() *Options {
 	options := &Options{}
 	flag.StringVar(&options.TargetListFile, 		"l", "unvalidated-resolvers.txt", "Target file (domains)")
-	flag.BoolVar(&options.Version, 					"i", false, "Version info")
+	flag.IntVar(&options.Iterations, 				"i", 20, "Number of iterations to run")
 	flag.BoolVar(&options.Verbose, 					"v", false, "Verbose mode")
 	flag.Parse()
 	return options
@@ -35,13 +32,11 @@ func parseOptions() *Options {
 func main() {
 
 	options := parseOptions()
-	if options.Version {
-		fmt.Println(version)
-	}
 	
 	if options.TargetListFile != "" {
 		if options.Verbose == true {
-			fmt.Printf("[+] dnscheck v%s\n",version)
+			fmt.Printf("[+] dnscheck\n")
+			fmt.Printf("  + Iterations: %d\n", options.Iterations)
 		}
 		TargetFilestream, _ := ioutil.ReadFile(options.TargetListFile)
 		targetContent := string(TargetFilestream)
@@ -52,26 +47,39 @@ func main() {
 			fmt.Printf("  + Starting routines\n")
 		}
 
-		wg := new(sync.WaitGroup)
-		routinescounter := 0
-		for _, target := range targets {
-			target = strings.ReplaceAll(target, " ", "")
-			if len(target) > 1 {
-				wg.Add(1)
-				go dnscheck.Start(target, options.Verbose, wg)
-				if routinescounter == int(math.Round(float64(len(targets)) / 10))  {
-					time.Sleep(5 * time.Second)
-					routinescounter = 0
-				} else {
-					routinescounter = routinescounter+1
+		// Run the specified number of iterations
+		for iteration := 1; iteration <= options.Iterations; iteration++ {
+			if options.Verbose == true {
+				fmt.Printf("  + Running iteration %d/%d\n", iteration, options.Iterations)
+			}
+			
+			wg := new(sync.WaitGroup)
+			routinescounter := 0
+			for _, target := range targets {
+				target = strings.ReplaceAll(target, " ", "")
+				if len(target) > 1 {
+					wg.Add(1)
+					go dnscheck.Start(target, options.Verbose, wg)
+					if routinescounter == int(math.Round(float64(len(targets)) / 10))  {
+						time.Sleep(5 * time.Second)
+						routinescounter = 0
+					} else {
+						routinescounter = routinescounter+1
+					}
 				}
 			}
+			wg.Wait()
+			
+			// Add a small delay between iterations if not the last one
+			if iteration < options.Iterations {
+				time.Sleep(1 * time.Second)
+			}
 		}
-		wg.Wait()
+		
+		if options.Verbose == true {
+			fmt.Printf("  + Completed all %d iterations\n", options.Iterations)
+		}
 	}
 	
 }
-
-
-
 
