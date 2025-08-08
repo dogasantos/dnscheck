@@ -26,16 +26,16 @@ func Start(target string, verbose bool, wg *sync.WaitGroup) {
 	var poisoned = false
 
 	defer wg.Done()
-	a_record = DoResolve("8.8.8.8" ,"1.resolvertest.pingback.me") // a.localtest.me also works
+	a_record = DoResolve("8.8.8.8" ,"a.localtest.me") // a.localtest.me also works
 	
 	if verbose {
-		fmt.Printf("  + Baseline: 1.resolvertest.pingback.me host has ip address %s\n", a_record)
+		fmt.Printf("  + Baseline: a.localtest.me host has ip address %s\n", a_record)
 	}
 	a_record = "" 
 
 	for i:=0; i < 19; i++ { 
-		a_record = DoResolve(target, "1.resolvertest.pingback.me") 
-		if a_record != "159.223.99.113" {
+		a_record = DoResolve(target, "a.localtest.me") 
+		if a_record != "127.0.0.1" {
 			poisoned = true
 			break
 		}
