@@ -21,8 +21,8 @@ type Options struct {
 func parseOptions() *Options {
 	options := &Options{}
 	flag.StringVar(&options.TargetListFile, "l", "", "File containing a list of resolvers to check (or stdin)")
-	flag.IntVar(&options.Requests, "r", 100, "Number of requests to send to each resolver")
-	flag.IntVar(&options.Workers, "w", 100, "Number of concurrent workers")
+	flag.IntVar(&options.Requests, "r", 40, "Number of requests to send to each resolver")
+	flag.IntVar(&options.Workers, "w", 40, "Number of concurrent workers")
 	flag.BoolVar(&options.Verbose, "v", false, "Verbose mode")
 	flag.Parse()
 	return options
