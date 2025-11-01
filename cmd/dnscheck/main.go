@@ -11,16 +11,12 @@ import (
 	dnscheck "github.com/dogasantos/dnscheck/pkg/runner"
 )
 
-// Options holds the command-line options
-
 type Options struct {
 	TargetListFile string
-	Requests       int // New flag for number of requests per resolver
-	Workers        int // New flag for number of concurrent workers
+	Requests       int
+	Workers        int
 	Verbose        bool
 }
-
-// parseOptions parses the command-line options
 
 func parseOptions() *Options {
 	options := &Options{}
